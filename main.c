@@ -20,7 +20,7 @@ int main(int argc, char **argv)
     input_buf = create_buf(sizeof(char) * (buf_size + 1));
     output_buf = create_buf(sizeof(char) * (buf_size + 1));
 
-    read_file(input, input_buf, buf_size);
+    read_file(input, input_buf, sizeof(*input_buf), buf_size);
     fclose(input);
 
     input_buf[buf_size] = '\0';

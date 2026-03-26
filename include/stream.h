@@ -6,7 +6,7 @@
 
 FILE *open_file(const char *name, const char *mode);
 
-size_t read_file(FILE *input, void *buf, size_t len);
+void read_file(FILE *input, void *buf, size_t memb_size, size_t memb_count);
 
 long file_size(const char *name, FILE *input);
 

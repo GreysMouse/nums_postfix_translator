@@ -16,14 +16,13 @@ FILE *open_file(const char *name, const char *mode)
     return file;
 }
 
-size_t read_file(FILE *input, void *buf, size_t len)
+void read_file(FILE *input, void *buf, size_t memb_size, size_t memb_count)
 {
-    size_t n = fread(buf, sizeof(buf), len, input);
+    size_t n = fread(buf, memb_size, memb_count, input);
 
-    if (n != len) {
+    if (n != memb_count) {
         INPUT_STREAM_READ_ERR();
     }
-    return n;
 }
 
 long file_size(const char *name, FILE *input)
