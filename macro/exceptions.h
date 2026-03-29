@@ -5,7 +5,7 @@
 #ifndef EXCEPTIONS_H
 #define EXCEPTIONS_H
 
-#define NO_INPUT_DATA_MSG()                                                    \
+#define NO_INPUT_DATA()                                                        \
     fprintf(stdout, "Nothing to translate: input data is empty\n");            \
     exit(EXIT_SUCCESS);
 
@@ -20,6 +20,11 @@
 #define INPUT_STREAM_READ_ERR()                                                \
     fprintf(stderr, "Input data stream read error\n");                         \
     exit(errno);
+
+#define PARSE_INVAL_CHAR_ERR(POSITION)                                         \
+    fprintf(stderr, "Parse error: invalid character in position %ld\n",        \
+            (POSITION));                                                       \
+    exit(EXIT_FAILURE);
 
 #define SYNTAX_LPAREN_ERR(POSITION)                                            \
     fprintf(stderr, "Syntax error: there is no '(' for ')' in position %ld\n", \
