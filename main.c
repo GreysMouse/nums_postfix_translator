@@ -7,33 +7,32 @@
 
 int main(int argc, char **argv)
 {
-    FILE *input, *output = stdout;
-    char *input_buf, *output_buf;
-    long buf_size;
+    FILE *src, *dest = stdout;
+    char *result;
+    long src_len;
 
     if (argc < 2) {
-        NO_INPUT_FILE_ERR(argv[0]);
+        NO_SRC_FILE_ERR(argv[0]);
     }
 
-    input = open_file(argv[1], "r");
-    buf_size = file_size(argv[1], input);
+    src = open_file(argv[1], "r");
+    src_len = file_size(argv[1], src);
 
-    input_buf = create_buf(sizeof(char) * (buf_size));
-    output_buf = create_buf(sizeof(char) * (buf_size));
+    if (!src_len) {
+        NO_INPUT_DATA();
+    }
 
-    read_file(input, input_buf, sizeof(*input_buf), buf_size);
-    fclose(input);
+    // result = create_buf(sizeof(char) * (input_len + 1));
 
-    translate(input_buf, output_buf, buf_size);
+    result = translate(src, src_len);
 
     if (argv[2]) {
-        output = open_file(argv[2], "w");
+        dest = open_file(argv[2], "w");
     }
 
-    fprintf(output, "%s\n", output_buf);
-
-    free(input_buf);
-    free(output_buf);
+    fprintf(dest, "%s\n", result);
+    fclose(src);
+    free(result);
 
     return EXIT_SUCCESS;
 }

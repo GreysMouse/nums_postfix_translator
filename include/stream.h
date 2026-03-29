@@ -6,8 +6,9 @@
 
 FILE *open_file(const char *name, const char *mode);
 
-void read_file(FILE *input, void *buf, size_t memb_size, size_t memb_count);
-
 long file_size(const char *name, FILE *input);
+
+int file_pull_c(FILE *input, long *ppos);
+void file_push_c(FILE *input, int c, long *ppos);
 
 #endif

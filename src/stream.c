@@ -16,15 +16,6 @@ FILE *open_file(const char *name, const char *mode)
     return file;
 }
 
-void read_file(FILE *input, void *buf, size_t memb_size, size_t memb_count)
-{
-    size_t n = fread(buf, memb_size, memb_count, input);
-
-    if (n != memb_count) {
-        INPUT_STREAM_READ_ERR();
-    }
-}
-
 long file_size(const char *name, FILE *input)
 {
     int end = fseek(input, 0L, SEEK_END);
@@ -43,4 +34,26 @@ long file_size(const char *name, FILE *input)
     rewind(input);
 
     return fpos;
+}
+
+int file_pull_c(FILE *input, long *ppos)
+{
+    int c = fgetc(input);
+
+    if (c == EOF) {
+        if (!feof(input)) {
+            INPUT_STREAM_ERR();
+        }
+    } else {
+        (*ppos)++;
+    }
+    return c;
+}
+
+void file_push_c(FILE *input, int c, long *ppos)
+{
+    if (ungetc(c, input) == EOF) {
+        INPUT_STREAM_ERR();
+    }
+    (*ppos)--;
 }

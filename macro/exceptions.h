@@ -9,8 +9,8 @@
     fprintf(stdout, "Nothing to translate: input data is empty\n");            \
     exit(EXIT_SUCCESS);
 
-#define NO_INPUT_FILE_ERR(PROGRAM_NAME)                                        \
-    fprintf(stderr, "Usage: %s <input file> [<output file>]\n", PROGRAM_NAME); \
+#define NO_SRC_FILE_ERR(PROGRAM_NAME)                                          \
+    fprintf(stderr, "Usage: %s <src file> [<dest file>]\n", PROGRAM_NAME);     \
     exit(EXIT_FAILURE);
 
 #define NO_BUFFER_MEMORY_ERR()                                                 \
