@@ -3,10 +3,10 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-enum token_id { NUM, PLUS, MINUS, MUL, DIV, L_PAREN, R_PAREN, BOUND };
+typedef enum { NUM, PLUS, MINUS, MUL, DIV, L_PAREN, R_PAREN, BOUND } token_id;
 
 typedef struct token {
-    int id;
+    token_id id;
     char *lex;
 } token;
 
