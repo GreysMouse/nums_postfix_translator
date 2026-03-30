@@ -42,7 +42,7 @@ int file_pull_c(FILE *input, long *ppos)
 
     if (c == EOF) {
         if (!feof(input)) {
-            INPUT_STREAM_ERR();
+            INPUT_STREAM_READ_ERR();
         }
     } else {
         (*ppos)++;
@@ -53,7 +53,7 @@ int file_pull_c(FILE *input, long *ppos)
 void file_push_c(FILE *input, int c, long *ppos)
 {
     if (ungetc(c, input) == EOF) {
-        INPUT_STREAM_ERR();
+        INPUT_STREAM_READ_ERR();
     }
     (*ppos)--;
 }

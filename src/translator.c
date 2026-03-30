@@ -12,6 +12,9 @@
 char *translate(FILE *src, long src_len)
 {
     token *tokens;
+    char *result;
 
     tokens = scan(src, src_len);
+
+    return result;
 }
