@@ -22,9 +22,11 @@ token *scan(FILE *src, long src_len)
 
     while ((c = file_pull_c(src, &pos)) != EOF) {
         if (c >= '0' && c <= '9') {
-            tokens[idx].id = NUM;
             num_len = peek_num_len(src, &pos);
+
+            tokens[idx].id = NUM;
             tokens[idx].lex = read_num(src, num_len, &pos);
+            tokens[idx].len = num_len;
         } else if (c == '+') {
             tokens[idx].id = PLUS;
         } else if (c == '-') {
@@ -45,6 +47,16 @@ token *scan(FILE *src, long src_len)
     tokens[idx].id = BOUND;
 
     return tokens;
+}
+
+void free_tokens(token *tokens)
+{
+    token *t = tokens;
+
+    for (; t->id != BOUND; t++) {
+        free(t->lex);
+    }
+    free(tokens);
 }
 
 static long peek_num_len(FILE *src, long *ppos)
@@ -68,17 +80,12 @@ static long peek_num_len(FILE *src, long *ppos)
 
 static char *read_num(FILE *src, long len, long *ppos)
 {
-    int i;
-    int c;
     char *res;
 
-    res = create_buf(sizeof(char) * (len + 1));
+    res = create_buf(sizeof(char) * len);
 
-    for (i = 0; i < len; i++) {
-        c = file_pull_c(src, ppos);
-        res[i] = c;
+    for (int i = 0; i < len; i++) {
+        res[i] = (char)file_pull_c(src, ppos);
     }
-    res[i + 1] = '\0';
-
     return res;
 }
