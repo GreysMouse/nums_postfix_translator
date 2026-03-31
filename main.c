@@ -22,8 +22,6 @@ int main(int argc, char **argv)
         NO_INPUT_DATA();
     }
 
-    // result = create_buf(sizeof(char) * (input_len + 1));
-
     result = translate(src, src_len);
 
     if (argv[2]) {
@@ -31,8 +29,8 @@ int main(int argc, char **argv)
     }
 
     fprintf(dest, "%s\n", result);
-    fclose(src);
     free(result);
+    fclose(src);
 
     return EXIT_SUCCESS;
 }

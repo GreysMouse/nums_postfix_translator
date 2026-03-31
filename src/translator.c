@@ -4,97 +4,101 @@
 #include "../macro/exceptions.h"
 #include <string.h>
 
-static void expr(token **tokens, char **result, int lpar);
-static void term(token **tokens, char **result, int lpar);
-static void atom(token **tokens, char **result);
+static void expr(token **tokens, char **output, int lpar);
+static void term(token **tokens, char **output, int lpar);
+static void atom(token **tokens, char **output);
 static void rpar(token **tokens);
 
 char *translate(FILE *src, long src_len)
 {
-    token *tokens;
-    char *result;
+    token *tokens, *pt;
+    char *output, *ps;
 
     tokens = scan(src, src_len);
-    result = create_buf(sizeof(char) * (src_len + 1));
+    output = create_buf(sizeof(char) * (src_len + 1));
 
-    /* work with 'tokens' and 'result'
+    /* work with 'pt' and 'ps'
      * in the same way as with a stream */
-    atom(&tokens, &result);
-    expr(&tokens, &result, 0);
+    pt = tokens;
+    ps = output;
+
+    atom(&pt, &ps);
+    expr(&pt, &ps, 0);
 
     free_tokens(tokens);
 
-    *result = '\0';
+    output[src_len] = '\0';
 
-    return result;
+    return output;
 }
 
-static void expr(token **tokens, char **result, int lpar)
+static void expr(token **tokens, char **output, int lpar)
 {
-    for (token t = **tokens; t.id != BOUND; (*tokens)++, t = **tokens) {
-        if (t.id == PLUS || t.id == MINUS) {
+    token_id id;
+
+    while ((**tokens).id != BOUND) {
+        id = (**tokens).id;
+
+        if (id == PLUS || id == MINUS) {
             (*tokens)++;
 
-            atom(tokens, result);
-            term(tokens, result, lpar);
+            atom(tokens, output);
+            term(tokens, output, lpar);
 
-            **result = (char)t.id;
-            (*result)++;
-        } else if (t.id == MUL || t.id == DIV) {
-            (*tokens)--;
-
-            term(tokens, result, lpar);
-        } else if (t.id == R_PAREN) {
+            **output = (char)id;
+            (*output)++;
+        } else if (id == MUL || id == DIV) {
+            term(tokens, output, lpar);
+        } else if (id == R_PAREN) {
             if (!lpar) {
                 SYNTAX_LPAREN_ERR(1L);
             }
-
-            (*tokens)--;
             break;
         } else {
-            SYNTAX_INVAL_OP_ERR(1L, (char)t.id);
+            SYNTAX_INVAL_OP_ERR(1L, (char)id);
         };
     }
 }
 
-static void term(token **tokens, char **result, int lpar)
+static void term(token **tokens, char **output, int lpar)
 {
-    for (token t = **tokens; t.id != BOUND; (*tokens)++, t = **tokens) {
-        if (t.id == MUL || t.id == DIV) {
+    token_id id;
+
+    while ((**tokens).id != BOUND) {
+        id = (**tokens).id;
+
+        if (id == MUL || id == DIV) {
             (*tokens)++;
 
-            atom(tokens, result);
+            atom(tokens, output);
 
-            **result = (char)t.id;
-            (*result)++;
-        } else if (t.id == PLUS || t.id == MINUS) {
-            (*tokens)--;
+            **output = (char)id;
+            (*output)++;
+        } else if (id == PLUS || id == MINUS) {
             break;
-        } else if (t.id == R_PAREN) {
+        } else if (id == R_PAREN) {
             if (!lpar) {
                 SYNTAX_LPAREN_ERR(1L);
             }
-
-            (*tokens)--;
             break;
         } else {
-            SYNTAX_INVAL_OP_ERR(1L, (char)t.id);
+            SYNTAX_INVAL_OP_ERR(1L, (char)id);
         };
     }
 }
 
-static void atom(token **tokens, char **result)
+static void atom(token **tokens, char **output)
 {
     token t = **tokens;
 
     (*tokens)++;
 
     if (t.id == NUM) {
-        memcpy(*result, t.lex, sizeof(char) * t.len);
-        *result += t.len;
+        memcpy(*output, t.lex, sizeof(char) * t.len);
+        *output += t.len;
     } else if (t.id == L_PAREN) {
-        atom(tokens, result);
-        expr(tokens, result, 1);
+        atom(tokens, output);
+        expr(tokens, output, 1);
         rpar(tokens);
     } else if (t.id == BOUND) {
         SYNTAX_NO_OPND_ERR(1L);
